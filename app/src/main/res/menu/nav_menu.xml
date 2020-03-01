@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/nav_menu_group_repo"
+        android:menuCategory="container"
+        android:checkableBehavior="none">
+    </group>
+
+    <group
+        android:menuCategory="secondary"
+        android:id="@+id/nav_menu_group_extra">
+        <item
+            android:id="@+id/nav_menu_add_repo"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="@string/nav_menu_add_repo" />
+    </group>
+
+</menu>

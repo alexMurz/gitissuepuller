@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">GitIssuePull</string>
+
+    <!-- Main Activity -->
+    <string name="main_no_repo">Nothing to see here, subscribe to a repository first</string>
+    <string name="main_no_repo_title">&#8592;</string>
+
+    <!-- Main Menu (Current repo control) -->
+    <string name="menu_unsubscribe">Unsubscribe</string>
+    <string name="menu_open">Open Externally</string>
+
+    <!-- Unsubscribe (Alert from MainActivity)-->
+    <string name="unsub_title">Unsubscribe</string>
+    <string name="unsub_message">Unsubscribe from %1$s</string>
+    <string name="unsub_confirm">OK</string>
+    <string name="unsub_cancel">Cancel</string>
+
+    <!-- New sub activity -->
+    <string name="sub_activity_name">Subscribe</string>
+    <string name="sub_repo_owner_tooltip">Repository Owner Name</string>
+    <string name="sub_updated_at">Last Updated: %1$s</string>
+    <string name="sub_error">Unable to obtain repo list, error: %1$s</string>
+
+    <!-- Nav Menu -->
+    <string name="nav_menu_add_repo">Subscribe to &#8230;</string>
+    <string name="nav_header">Subscriptions</string>
+
+    <!-- Drawer stuff -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+
+    <!-- List Item Strings -->
+    <string name="list_error">Unable to obtain issue list, error: %1$s</string>
+    <string name="list_item_date">Date: %1$s</string>
+
+</resources>

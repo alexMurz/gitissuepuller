@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
+        <variable
+            name="adapter"
+            type="com.example.gitissuepull.ui.sub.SubscribeRepoListAdapter" />
+        <variable
+            name="manager"
+            type="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            />
+
+
+        <EditText
+            android:id="@+id/repo_owner_edittext"
+            android:hint="@string/sub_repo_owner_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="text"
+            android:enabled="@{!isLoading}"
+            />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                app:adapter="@{adapter}"
+                app:manager="@{manager}" />
+
+            <!-- Big loading bar for user search -->
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="@{(adapter.itemCount == 0 &amp;&amp; isLoading) ? View.VISIBLE : View.GONE}" />
+
+            <!-- Small, Bottom Loading bar for lust update -->
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:visibility="@{(adapter.itemCount > 0 &amp;&amp; isLoading) ? View.VISIBLE : View.GONE}" />
+
+        </FrameLayout>
+
+
+
+    </LinearLayout>
+
+
+</layout>
