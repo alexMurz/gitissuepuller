@@ -3,7 +3,7 @@ package com.example.gitissuepull.api
 import com.example.gitissuepull.entity.api.Issue
 import com.example.gitissuepull.entity.api.Repository
 import com.example.gitissuepull.entity.api.User
-import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
@@ -21,19 +21,19 @@ class GitApiRetrofit: GitApiAccess {
         .build()
         .create(GitApiAccess::class.java)
 
-    override fun getIssues(owner: String, repo: String): Flowable<List<Issue>> =
+    override fun getIssues(owner: String, repo: String): Single<List<Issue>> =
         base.getIssues(owner, repo).observeOn(AndroidSchedulers.mainThread())
 
-    override fun getIssuesSince(owner: String, repo: String, date: String): Flowable<List<Issue>> =
+    override fun getIssuesSince(owner: String, repo: String, date: String): Single<List<Issue>> =
         base.getIssuesSince(owner, repo, date).observeOn(AndroidSchedulers.mainThread())
 
-    override fun getUser(owner: String): Flowable<User> =
+    override fun getUser(owner: String): Single<User> =
         base.getUser(owner).observeOn(AndroidSchedulers.mainThread())
 
-    override fun getUserRepos(owner: String, page: Int, per_page: Int): Flowable<List<Repository>> =
+    override fun getUserRepos(owner: String, page: Int, per_page: Int): Single<List<Repository>> =
         base.getUserRepos(owner, page, per_page).observeOn(AndroidSchedulers.mainThread())
 
-    override fun getRepoByID(id: String): Flowable<Repository> =
+    override fun getRepoByID(id: String): Single<Repository> =
         base.getRepoByID(id).observeOn(AndroidSchedulers.mainThread())
 
 
