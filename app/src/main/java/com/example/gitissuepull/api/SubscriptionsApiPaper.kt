@@ -15,22 +15,10 @@ class SubscriptionsApiPaper(val book: Book, val scheduler: Scheduler): Subscript
 
     override fun getAll(): Single<List<Repository>> {
         val list = book.read<ArrayList<Repository>>(book_tag, ArrayList())
-//        list.add(Repository(
-//            0,
-//            "RxPaper2",
-//            "0",
-//            "URL",
-//            User(
-//                "pakoito",
-//                "AVATAR_URL"
-//            )
-//        ))
-        println("PAPER LOADED: ${list.joinToString()}")
         return Single.just(list)
     }
 
     override fun saveAll(list: List<Repository>) {
-        println("Save list: ${list.joinToString()}")
         book.write(book_tag, list)
     }
 

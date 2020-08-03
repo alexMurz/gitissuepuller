@@ -13,10 +13,6 @@ class GitApiRetrofit(private val schedulers: Schedulers): GitApiAccess {
     private companion object {
         private const val URL = "https://api.github.com/"
     }
-    init {
-        println("Inited new retrofit")
-    }
-
     private val base = Retrofit.Builder()
         .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(schedulers.single()))
         .addConverterFactory(GsonConverterFactory.create())

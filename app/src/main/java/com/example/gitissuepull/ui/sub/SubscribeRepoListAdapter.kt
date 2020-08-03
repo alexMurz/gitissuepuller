@@ -30,7 +30,6 @@ class SubscribeRepoListAdapter: RecyclerView.Adapter<SubscribeRepoListAdapter.Ho
         }
         fun onClick() {
             eventListener?.invoke(binding.repo!!)
-            println("Repo flag: ${binding.repo!!.isSubbed}")
             binding.repo = binding.repo // Eh
 
         }
