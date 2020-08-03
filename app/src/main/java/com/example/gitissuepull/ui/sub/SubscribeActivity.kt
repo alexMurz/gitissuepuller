@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitissuepull.App
 import com.example.gitissuepull.databinding.SubscribeActivityBinding
+import com.google.android.material.snackbar.Snackbar
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
 
 class SubscribeActivity: AppCompatActivity() {
@@ -71,10 +74,17 @@ class SubscribeActivity: AppCompatActivity() {
                 items.clear()
                 items.addAll(it)
                 notifyDataSetChanged()
-//                Snackbar.make(binding.listView, getString(R.string.sub_error, it.getError()), Snackbar.LENGTH_SHORT).show()
-//                it.getError().printStackTrace()
             })
         }
+        viewModel.error.observe(lifecycleOwner, Observer {
+            val msg = when (it) {
+                is HttpException -> getString(R.string.error_no_user)
+                is UnknownHostException -> getString(R.string.error_no_ethernet)
+                else -> it.localizedMessage ?: it.message ?: "Unknown Exception"
+            }
+            Snackbar.make(binding.listView, msg, Snackbar.LENGTH_LONG).show()
+            it.printStackTrace()
+        })
 
         // Reach bottom of the page listener
         binding.listView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

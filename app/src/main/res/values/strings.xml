@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">GitIssuePull</string>
 
+    <!-- Generic Error Kind -->
+    <string name="error_no_ethernet">No internet connection</string>
+    <string name="error_no_user">User does not exist</string>
+
     <!-- Main Activity -->
     <string name="main_no_repo">Nothing to see here, subscribe to a repository first</string>
     <string name="main_no_repo_title">&#8592;</string>
@@ -19,7 +23,6 @@
     <string name="sub_activity_name">Subscribe</string>
     <string name="sub_repo_owner_tooltip">Repository Owner Name</string>
     <string name="sub_updated_at">Last Updated: %1$s</string>
-    <string name="sub_error">Unable to obtain repo list, error: %1$s</string>
 
     <!-- Nav Menu -->
     <string name="nav_menu_add_repo">Subscribe to &#8230;</string>

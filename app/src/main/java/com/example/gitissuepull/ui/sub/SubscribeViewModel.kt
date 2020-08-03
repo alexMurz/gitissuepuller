@@ -25,6 +25,8 @@ class SubscribeViewModel: ViewModel(), UserRepoRepository.Callback {
     val disposable = CompositeDisposable()
     val isLoading = MutableLiveData(false)
     val loadedRepos = MutableLiveData<List<RepositoryViewData>>()
+    // Error callback
+    val error = MutableLiveData<Throwable>()
 
     fun attach() { userReposRepository.addListener(this) }
 
@@ -50,7 +52,6 @@ class SubscribeViewModel: ViewModel(), UserRepoRepository.Callback {
         if (isLoading.value == true) return
         if (userReposRepository.loadNextPage())
             isLoading.value = true
-
     }
 
     fun userLoaded(user: User) {
@@ -59,7 +60,9 @@ class SubscribeViewModel: ViewModel(), UserRepoRepository.Callback {
     }
 
     fun userError(throwable: Throwable) {
-
+        userReposRepository.clear()
+        error.value = throwable
+        isLoading.value = false
     }
 
     override fun onPageLoaded(added: List<Repository>) {

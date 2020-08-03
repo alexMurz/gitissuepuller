@@ -14,6 +14,7 @@ class IssueListViewModel : ViewModel(), IssueRepository.Result {
 
     val isLoading = MutableLiveData<Boolean>()
     val issueData = MutableLiveData<List<Issue>>()
+    val error = MutableLiveData<Throwable>()
 
     // Repo data, given by fragment on init
     fun attachWith(owner: String, repo: String) {
@@ -33,6 +34,7 @@ class IssueListViewModel : ViewModel(), IssueRepository.Result {
 
     override fun onError(error: Throwable) {
         isLoading.value = false
+        this.error.value = error
         Log.e("IssueListViewModel", "Error: $error")
     }
 

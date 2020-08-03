@@ -20,9 +20,14 @@ class UserRepoRepository(
     private var task: Disposable? = null // Current/Last task
     private var user: User? = null // Current user
 
-    fun setUser(user: User) {
+    fun clear() {
         loaded.clear()
         task?.dispose()
+        user = null
+    }
+
+    fun setUser(user: User) {
+        clear()
         this.user = user
     }
 

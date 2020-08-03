@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gitissuepull.App
 import com.example.gitissuepull.R
 import com.example.gitissuepull.databinding.IssueListFragmentBinding
+import com.google.android.material.snackbar.Snackbar
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
 class IssueListFragment : Fragment() {
 
@@ -59,6 +62,15 @@ class IssueListFragment : Fragment() {
                 notifyDataSetChanged()
             })
         }
+
+        viewModel.error.observe(viewLifecycleOwner, Observer {
+            val msg = when (it) {
+                is UnknownHostException -> getString(R.string.error_no_ethernet)
+                else -> it.localizedMessage ?: it.message ?: "Unknown Exception"
+            }
+            Snackbar.make(binding.listView, msg, Snackbar.LENGTH_LONG).show()
+            it.printStackTrace()
+        })
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer { binding.loading = it })
 
