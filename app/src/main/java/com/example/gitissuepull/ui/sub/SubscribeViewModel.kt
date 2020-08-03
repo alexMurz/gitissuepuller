@@ -2,70 +2,90 @@ package com.example.gitissuepull.ui.sub
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.gitissuepull.entity.RepositoryResult
-import com.example.gitissuepull.repo.SubscriptionRepository
-import com.example.gitissuepull.entity.api.Repository
-import com.example.gitissuepull.entity.api.User
-import com.example.gitissuepull.repo.IUserReposRepository
+import com.example.gitissuepull.domain.data.Repository
+import com.example.gitissuepull.domain.data.User
+import com.example.gitissuepull.domain.repo.SubscriptionsRepository
+import com.example.gitissuepull.domain.repo.UserRepoRepository
+import com.example.gitissuepull.domain.repo.UsersRepository
+import io.reactivex.SingleObserver
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import javax.inject.Inject
 
-class SubscribeViewModel: ViewModel(), IUserReposRepository.Listener {
+class SubscribeViewModel: ViewModel(), UserRepoRepository.Callback {
 
     @Inject
-    lateinit var subManager: SubscriptionRepository
+    lateinit var subManager: SubscriptionsRepository
     @Inject
-    lateinit var userRepos: IUserReposRepository
+    lateinit var usersRepository: UsersRepository
+    @Inject
+    lateinit var userReposRepository: UserRepoRepository
 
+    val disposable = CompositeDisposable()
     val isLoading = MutableLiveData(false)
-    val loadedRepos = MutableLiveData<RepositoryResult<List<Repository>>>()
+    val loadedRepos = MutableLiveData<List<RepositoryViewData>>()
 
-    fun attach() { userRepos.addListener(this) }
+    fun attach() { userReposRepository.addListener(this) }
 
     override fun onCleared() {
         super.onCleared()
-        userRepos.removeListener(this)
+        disposable.dispose()
+        userReposRepository.removeListener(this)
     }
 
-    fun startLoading(owner: String) {
+    fun startLoading(name: String) {
         loadedRepos.value = null
         isLoading.value = true
-        userRepos.setCurrentUser(owner)
+        // Load user for name
+        disposable.add(usersRepository.getUser(name)
+            .subscribe(
+            { userLoaded(it) },
+            { userError(it) }
+        ))
     }
 
     private fun loadNextPage() {
         // Await previous task, whatever that is
         if (isLoading.value == true) return
-        if (userRepos.loadNextPage())
+        if (userReposRepository.loadNextPage())
             isLoading.value = true
 
     }
 
-    // UserReposRepositoryListener
-    override fun onUserInfoLoaded(user: User) {
-        userRepos.loadNextPage()
+    fun userLoaded(user: User) {
+        userReposRepository.setUser(user)
+        userReposRepository.loadNextPage()
     }
 
-    override fun onPageLoaded(page: List<Repository>) {
+    fun userError(throwable: Throwable) {
+
+    }
+
+    override fun onPageLoaded(added: List<Repository>) {
         isLoading.value = false
-        loadedRepos.value = RepositoryResult.fromValue(userRepos.loadedRepositories)
+        loadedRepos.value = added.map {
+            val isSubbed = subManager.subs.contains(it)
+            RepositoryViewData(isSubbed, it)
+        }
     }
 
     override fun onLoadingCompleted() {}
 
-    override fun onError(e: Throwable) {
-        loadedRepos.value = RepositoryResult.fromError(e)
+    override fun onError(throwable: Throwable) {
+        // Throw upstream
     }
 
     // Event listeners
     fun pageEndReached() = loadNextPage()
 
-    fun clicked(repo: Repository) {
-        if (repo.subCheck) {
-            repo.subCheck = false
-            subManager.unsubFrom(repo)
+    fun clicked(repo: RepositoryViewData) {
+        if (repo.isSubbed) {
+            repo.isSubbed = false
+            subManager.unsubFrom(repo.repo)
         } else {
-            repo.subCheck = true
-            subManager.subscribeTo(repo)
+            repo.isSubbed = true
+            subManager.subscribeTo(repo.repo)
         }
     }
 

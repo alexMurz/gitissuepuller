@@ -6,13 +6,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitissuepull.R
 import com.example.gitissuepull.databinding.SubscribeActivityItemBinding
-import com.example.gitissuepull.entity.api.Repository
 
 class SubscribeRepoListAdapter: RecyclerView.Adapter<SubscribeRepoListAdapter.Holder>() {
 
-    var eventListener: ((Repository) -> Unit)? = null
+    var eventListener: ((RepositoryViewData) -> Unit)? = null
 
-    val items = ArrayList<Repository>()
+    val items = ArrayList<RepositoryViewData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.subscribe_activity_item, parent, false))
@@ -25,16 +24,13 @@ class SubscribeRepoListAdapter: RecyclerView.Adapter<SubscribeRepoListAdapter.Ho
     override fun getItemCount() = items.size
 
     inner class Holder(val binding: SubscribeActivityItemBinding): RecyclerView.ViewHolder(binding.root) {
-        fun set(data: Repository) {
+        fun set(data: RepositoryViewData) {
             binding.listener = this
             binding.repo = data
         }
         fun onClick() {
             eventListener?.invoke(binding.repo!!)
-            println("Repo flag: ${binding.repo!!.subCheck}")
-//            binding.notifyChange()
-//            binding.executePendingBindings()
-//            binding.notifyPropertyChanged(BR.repo)
+            println("Repo flag: ${binding.repo!!.isSubbed}")
             binding.repo = binding.repo // Eh
 
         }

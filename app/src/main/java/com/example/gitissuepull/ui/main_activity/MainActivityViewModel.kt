@@ -3,45 +3,41 @@ package com.example.gitissuepull.ui.main_activity
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.gitissuepull.repo.SubscriptionRepository
-import com.example.gitissuepull.entity.api.Repository
+import com.example.gitissuepull.domain.data.Repository
+import com.example.gitissuepull.domain.repo.SubscriptionsRepository
 import javax.inject.Inject
 
-class MainActivityViewModel: ViewModel(), SubscriptionRepository.OnUpdateListener {
+class MainActivityViewModel: ViewModel(), SubscriptionsRepository.Callback {
 
-    @Inject
-    lateinit var subManager: SubscriptionRepository
+    @Inject lateinit var subRepo: SubscriptionsRepository
 
     val subscriptions = MutableLiveData<List<Repository>>()
     val currentSub = MutableLiveData<Repository?>()
 
-    // Check if current sub still in subscriptions
-    // Then `null` try put any sub if repository have some to offer
-    private fun validateSub() {
-        if (currentSub.value == null || !subManager.list.contains(currentSub.value!!)) {
-            currentSub.value = subManager.list.elementAtOrNull(0)
+    // Validate current sub, and if is not valid put first
+    private fun validateCurrent() {
+        if (currentSub.value == null || !subRepo.subs.contains(currentSub.value!!)) {
+            currentSub.value = subRepo.subs.elementAtOrNull(0)
         }
     }
 
+    override fun subscriptionsUpdated(new: List<Repository>) {
+        subscriptions.value = new
+        validateCurrent()
+    }
+
     fun attach() {
-        subManager.addUpdateListener(this)
-        validateSub()
+        subRepo.addListener(this)
     }
 
     override fun onCleared() {
         super.onCleared()
-        subManager.removeUpdateListener(this)
-    }
-
-    /// Repository Listener
-    override fun subscriptionsUpdated(list: List<Repository>) {
-        subscriptions.value = list
-        validateSub()
+        subRepo.removeListener(this)
     }
 
     /// Event Listener
     fun subscriptionClicked(id: Int) {
-        val s = subManager.list.find { it.id == id }
+        val s = subRepo.subs.find { it.id == id }
         // Update only if required
         if (s != currentSub.value) currentSub.value = s
     }
@@ -52,16 +48,14 @@ class MainActivityViewModel: ViewModel(), SubscriptionRepository.OnUpdateListene
     // Request to open current subscription in browser
     // return null to ignore request
     fun openExternally(): Uri? {
-        return Uri.parse(currentSub.value?.htmlUrl ?: return null)
+        return Uri.parse(currentSub.value?.url ?: return null)
     }
 
     fun unsubscribe() {
         val sub = currentSub.value ?: return
-        val idx = subManager.list.indexOf(sub)
-        subManager.unsubFrom(sub)
+        val idx = subRepo.subs.indexOf(sub)
+        subRepo.unsubFrom(sub)
         // Show previous sub
-        currentSub.value = subManager.list.elementAtOrNull(idx-1)
+        currentSub.value = subRepo.subs.elementAtOrNull(idx-1)
     }
-    
-
 }

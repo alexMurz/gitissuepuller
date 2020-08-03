@@ -1,8 +1,8 @@
 package com.example.gitissuepull.di.component
 
-import com.example.gitissuepull.di.scope.InjectorScope
-import com.example.gitissuepull.ui.list.ListFragment
-import com.example.gitissuepull.ui.list.ListViewModel
+import com.example.gitissuepull.di.InjectorScope
+import com.example.gitissuepull.ui.issue_list.IssueListFragment
+import com.example.gitissuepull.ui.issue_list.IssueListViewModel
 import com.example.gitissuepull.ui.main_activity.MainActivity
 import com.example.gitissuepull.ui.main_activity.MainActivityViewModel
 import com.example.gitissuepull.ui.sub.SubscribeActivity
@@ -15,9 +15,10 @@ interface Injector {
     fun inject(v: MainActivity)
     fun inject(v: MainActivityViewModel)
 
-    fun inject(v: ListFragment)
-    fun inject(v: ListViewModel)
+    fun inject(v: IssueListFragment)
+    fun inject(v: IssueListViewModel)
 
     fun inject(v: SubscribeActivity)
     fun inject(v: SubscribeViewModel)
+
 }

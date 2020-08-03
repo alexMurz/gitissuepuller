@@ -15,17 +15,21 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.gitissuepull.App
 import com.example.gitissuepull.R
 import com.example.gitissuepull.databinding.MainActivityBinding
-import com.example.gitissuepull.entity.api.Repository
-import com.example.gitissuepull.ui.list.ListFragment
+import com.example.gitissuepull.domain.data.Issue
+import com.example.gitissuepull.domain.data.Repository
+import com.example.gitissuepull.domain.repo.IssueRepository
+import com.example.gitissuepull.ui.issue_list.IssueListFragment
 import com.example.gitissuepull.ui.sub.SubscribeActivity
 import com.google.android.material.navigation.NavigationView
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     lateinit var binding: MainActivityBinding
     lateinit var viewModel: MainActivityViewModel
 
     lateinit var drawerToggle: ActionBarDrawerToggle
+
 
     // Save ID to preserve fragment through rotations
     private var currentSubscription = -1
@@ -44,9 +48,55 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         inject()
+        attachLiveData()
         viewModel.attach()
         init(savedInstanceState)
-        attachLiveData()
+    }
+
+    // Setup liveData here, because backButton does not cause recreate then returning from other activity
+    // but liveData still dies
+    private fun attachLiveData() {
+        // Change fragment in accordance with selected subscription
+        viewModel.currentSub.observe(this, Observer {
+            binding.isEmpty = it == null
+            if (it != null) {
+                if (it.id != currentSubscription) {
+                    currentSubscription = it.id
+                    showSubscription(it)
+                }
+            } else showNoSub()
+        })
+
+        // List of subscriptions
+        viewModel.subscriptions.observe(this, Observer {
+            val menu = binding.navigationView.menu
+            menu.removeGroup(R.id.nav_menu_group_repo)
+            for (sub in it) {
+                menu.add(R.id.nav_menu_group_repo, sub.id, 0, viewModel.getSubscriptionTitle(sub))
+            }
+
+        })
+    }
+
+    /// Present fragment
+    private fun showSubscription(sub: Repository) {
+        title = viewModel.getSubscriptionTitle(sub)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, IssueListFragment().apply {
+                arguments = Bundle().apply {
+                    putString("owner", sub.owner.login)
+                    putString("repo", sub.name)
+                }
+            })
+            .commit()
+    }
+
+    /// Remove fragment if present
+    private fun showNoSub() {
+        title = getString(R.string.main_no_repo_title)
+        for (f in supportFragmentManager.fragments) if (f is IssueListFragment) {
+            supportFragmentManager.beginTransaction().remove(f).commit()
+        }
     }
 
     private fun init(savedInstanceState: Bundle?) {
@@ -71,58 +121,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.navigationView.setNavigationItemSelectedListener(this)
     }
 
-    // Setup liveData here, because backButton does not cause recreate then returning from other activity
-    // but liveData still dies
-    private fun attachLiveData() {
-        // Change fragment in accordance with selected subscription
-        viewModel.currentSub.observe(this, Observer {
-            binding.isEmpty = it == null
-            println("Test sub ${it?.id}")
-            if (it != null) {
-                if (it.id != currentSubscription) {
-                    currentSubscription = it.id
-                    showSubscription(it)
-                }
-            } else showNoSub()
-        })
-
-        // List of subscriptions
-        viewModel.subscriptions.observe(this, Observer {
-            val menu = binding.navigationView.menu
-            menu.removeGroup(R.id.nav_menu_group_repo)
-            for (sub in it) {
-                menu.add(R.id.nav_menu_group_repo, sub.id, 0, viewModel.getSubscriptionTitle(sub))
-            }
-
-        })
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(TAG_CURRENT_VIEW_ID, currentSubscription)
     }
 
-    private fun showSubscription(sub: Repository) {
-        title = viewModel.getSubscriptionTitle(sub)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, ListFragment().apply {
-                arguments = Bundle().apply {
-                    putString("owner", sub.owner.login)
-                    putString("repo", sub.name)
-                }
-            })
-            .commit()
-    }
-
-    private fun showNoSub() {
-        title = getString(R.string.main_no_repo_title)
-        for (f in supportFragmentManager.fragments) if (f is ListFragment) {
-            supportFragmentManager.beginTransaction().remove(f).commit()
-        }
-    }
-
+    // Open `FindNewSub` Activity
     private fun openNewSubscription() {
-        startActivity(Intent(this, SubscribeActivity::class.java))
+        startActivityForResult(Intent(this, SubscribeActivity::class.java), NEW_SUB_RETURN)
+    }
+
+    // Result from `FindNewSub` Activity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Returned from `SubscribeActivity`, update list of subscribers
+        viewModel.attach()
     }
 
     // Drawer navigation callback
@@ -140,6 +154,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
+
 
     /// Toolbar button + Repo menu
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -179,6 +194,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
         const val TAG_CURRENT_VIEW_ID = "currentViewID"
+        const val NEW_SUB_RETURN = 100
     }
 
 

@@ -1,0 +1,23 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    testImplementation 'junit:junit:4.12'
+
+    // Rx (Reactive)
+    implementation "io.reactivex.rxjava2:rxjava:2.2.18"
+
+    // Dagger 2 (DI)
+    implementation "com.google.dagger:dagger:2.26"
+    kapt "com.google.dagger:dagger-compiler:2.26"
+    compileOnly "org.glassfish:javax.annotation:3.1.1"
+
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

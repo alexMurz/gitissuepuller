@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gitissuepull.App
 import com.example.gitissuepull.databinding.SubscribeActivityBinding
-import com.example.gitissuepull.entity.RepositoryResult
-import com.google.android.material.snackbar.Snackbar
 
 
 class SubscribeActivity: AppCompatActivity() {
@@ -71,16 +69,10 @@ class SubscribeActivity: AppCompatActivity() {
             viewModel.loadedRepos.observe(lifecycleOwner, Observer {
                 if (it == null) return@Observer
                 items.clear()
-                when (it.type()) {
-                    RepositoryResult.Type.Value -> {
-                        items.addAll(it.getValue())
-                        notifyDataSetChanged()
-                    }
-                    RepositoryResult.Type.Error -> {
-                        Snackbar.make(binding.listView, getString(R.string.sub_error, it.getError()), Snackbar.LENGTH_SHORT).show()
-                        it.getError().printStackTrace()
-                    }
-                }
+                items.addAll(it)
+                notifyDataSetChanged()
+//                Snackbar.make(binding.listView, getString(R.string.sub_error, it.getError()), Snackbar.LENGTH_SHORT).show()
+//                it.getError().printStackTrace()
             })
         }
 

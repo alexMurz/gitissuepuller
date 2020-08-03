@@ -3,16 +3,17 @@ package com.example.gitissuepull
 import android.app.Activity
 import android.app.Application
 import androidx.fragment.app.Fragment
-import com.example.gitissuepull.api.GitApiAccess
-import com.example.gitissuepull.api.GitApiRetrofit
 import com.example.gitissuepull.di.component.*
 import com.example.gitissuepull.di.module.AppModule
 import com.example.gitissuepull.di.module.RepositoryModule
 
 class App: Application() {
     companion object {
-        fun injector(ctx: Activity) = (ctx.application as App).injector
-        fun injector(ctx: Fragment) = injector(ctx.activity!!)
+        fun get(ctx: Activity) = ctx.application as App
+        fun get(ctx: Fragment) = get(ctx.requireActivity())
+
+        fun injector(ctx: Activity) = get(ctx).injector
+        fun injector(ctx: Fragment) = get(ctx).injector
     }
 
     lateinit var appComponent: AppComponent; private set
@@ -28,17 +29,12 @@ class App: Application() {
 
         repositoryComponent = DaggerRepositoryComponent.builder()
             .appComponent(appComponent)
-            .repositoryModule(RepositoryModule(GitApiRetrofit()))
             .build()
 
         injector = DaggerInjector.builder()
             .repositoryComponent(repositoryComponent)
             .build()
-
-        // Start foreground notification service
-//        val intent = Intent(this, NotificationService::class.java)
-//        ContextCompat.startForegroundService(this, intent)
-
     }
+
 
 }
