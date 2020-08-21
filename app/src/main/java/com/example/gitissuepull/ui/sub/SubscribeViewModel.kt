@@ -4,13 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gitissuepull.domain.data.Repository
 import com.example.gitissuepull.domain.data.User
-import com.example.gitissuepull.domain.repo.SubscriptionsRepository
-import com.example.gitissuepull.domain.repo.UserRepoRepository
-import com.example.gitissuepull.domain.repo.UsersRepository
-import io.reactivex.SingleObserver
+import com.example.gitissuepull.domain.repo.subscriptions.SubscriptionsRepository
+import com.example.gitissuepull.domain.repo.user_repos.UserRepoRepository
+import com.example.gitissuepull.domain.repo.users.UsersRepository
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
 import javax.inject.Inject
 
 class SubscribeViewModel: ViewModel(), UserRepoRepository.Callback {
@@ -40,8 +37,7 @@ class SubscribeViewModel: ViewModel(), UserRepoRepository.Callback {
         loadedRepos.value = null
         isLoading.value = true
         // Load user for name
-        disposable.add(usersRepository.getUser(name)
-            .subscribe(
+        disposable.add(usersRepository.getUser(name).subscribe(
             { userLoaded(it) },
             { userError(it) }
         ))
@@ -68,7 +64,7 @@ class SubscribeViewModel: ViewModel(), UserRepoRepository.Callback {
     override fun onPageLoaded(added: List<Repository>) {
         isLoading.value = false
         loadedRepos.value = added.map {
-            val isSubbed = subManager.subs.contains(it)
+            val isSubbed = subManager.list().contains(it)
             RepositoryViewData(isSubbed, it)
         }
     }

@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gitissuepull.domain.data.Issue
-import com.example.gitissuepull.domain.repo.IssueRepository
+import com.example.gitissuepull.domain.repo.issue.BasicIssueRepository
+import com.example.gitissuepull.domain.repo.issue.IssueRepository
 import javax.inject.Inject
 
-class IssueListViewModel : ViewModel(), IssueRepository.Result {
+class IssueListViewModel : ViewModel(),
+    IssueRepository.Result {
 
     @Inject
     lateinit var repo: IssueRepository
@@ -39,6 +41,6 @@ class IssueListViewModel : ViewModel(), IssueRepository.Result {
     }
 
     // Event Listener for View
-    fun onRefresh() = repo.reloadData()
+    fun onRefresh() = repo.reload()
 
 }

@@ -15,13 +15,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.gitissuepull.App
 import com.example.gitissuepull.R
 import com.example.gitissuepull.databinding.MainActivityBinding
-import com.example.gitissuepull.domain.data.Issue
 import com.example.gitissuepull.domain.data.Repository
-import com.example.gitissuepull.domain.repo.IssueRepository
 import com.example.gitissuepull.ui.issue_list.IssueListFragment
 import com.example.gitissuepull.ui.sub.SubscribeActivity
 import com.google.android.material.navigation.NavigationView
-import javax.inject.Inject
 
 class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 

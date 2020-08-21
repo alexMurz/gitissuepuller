@@ -7,10 +7,10 @@ import com.example.gitissuepull.data.api.SubscriptionsApi
 import com.example.gitissuepull.data.api.UsersApi
 import com.example.gitissuepull.di.module.RepositoryModule
 import com.example.gitissuepull.di.DataScope
-import com.example.gitissuepull.domain.repo.IssueRepository
-import com.example.gitissuepull.domain.repo.SubscriptionsRepository
-import com.example.gitissuepull.domain.repo.UserRepoRepository
-import com.example.gitissuepull.domain.repo.UsersRepository
+import com.example.gitissuepull.domain.repo.issue.IssueRepository
+import com.example.gitissuepull.domain.repo.subscriptions.SubscriptionsRepository
+import com.example.gitissuepull.domain.repo.user_repos.UserRepoRepository
+import com.example.gitissuepull.domain.repo.users.UsersRepository
 
 import dagger.Component
 

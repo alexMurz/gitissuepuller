@@ -4,7 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gitissuepull.domain.data.Repository
-import com.example.gitissuepull.domain.repo.SubscriptionsRepository
+import com.example.gitissuepull.domain.repo.subscriptions.BasicSubscriptionsRepository
+import com.example.gitissuepull.domain.repo.subscriptions.SubscriptionsRepository
+import com.example.gitissuepull.domain.repo.user_repos.UserRepoRepository
 import javax.inject.Inject
 
 class MainActivityViewModel: ViewModel(), SubscriptionsRepository.Callback {
@@ -16,8 +18,8 @@ class MainActivityViewModel: ViewModel(), SubscriptionsRepository.Callback {
 
     // Validate current sub, and if is not valid put first
     private fun validateCurrent() {
-        if (currentSub.value == null || !subRepo.subs.contains(currentSub.value!!)) {
-            currentSub.value = subRepo.subs.elementAtOrNull(0)
+        if (currentSub.value == null || !subRepo.list().contains(currentSub.value!!)) {
+            currentSub.value = subRepo.list().elementAtOrNull(0)
         }
     }
 
@@ -37,7 +39,7 @@ class MainActivityViewModel: ViewModel(), SubscriptionsRepository.Callback {
 
     /// Event Listener
     fun subscriptionClicked(id: Int) {
-        val s = subRepo.subs.find { it.id == id }
+        val s = subRepo.list().find { it.id == id }
         // Update only if required
         if (s != currentSub.value) currentSub.value = s
     }
@@ -53,9 +55,9 @@ class MainActivityViewModel: ViewModel(), SubscriptionsRepository.Callback {
 
     fun unsubscribe() {
         val sub = currentSub.value ?: return
-        val idx = subRepo.subs.indexOf(sub)
+        val idx = subRepo.list().indexOf(sub)
         subRepo.unsubFrom(sub)
         // Show previous sub
-        currentSub.value = subRepo.subs.elementAtOrNull(idx-1)
+        currentSub.value = subRepo.list().elementAtOrNull(idx-1)
     }
 }
