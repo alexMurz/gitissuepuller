@@ -6,8 +6,11 @@ import io.reactivex.Single
 
 interface IssueRepository: IRepositoryBase<IssueRepository.Result> {
 
-    fun setSource(user: String, repo: String)
-    fun reload()
+    // Get loaded data or load new
+    fun get(user: String, repo: String) = load(user, repo)
+
+    // Load new data
+    fun load(user: String, repo: String)
 
     // Use cases
     interface UseGet {
