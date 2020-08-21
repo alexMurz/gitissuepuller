@@ -3,6 +3,8 @@ package com.example.gitissuepull.domain.repo
 interface IRepositoryBase<T> {
     fun addListener(l: T): Boolean
     fun removeListener(l: T): Boolean
+    fun onListenerAdded(l: T) {}
+    fun onListenerRemoved(l: T) {}
 }
 
 open class RepositoryBase<T>: IRepositoryBase<T> {
@@ -19,8 +21,8 @@ open class RepositoryBase<T>: IRepositoryBase<T> {
         return b
     }
 
-    open fun onListenerAdded(l: T) {}
-    open fun onListenerRemoved(l: T) {}
+    override fun onListenerAdded(l: T) {}
+    override fun onListenerRemoved(l: T) {}
 
     protected inline fun callback(func: T.() -> Unit) {
         for (listener in listeners) listener.func()

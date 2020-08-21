@@ -1,13 +1,15 @@
 package com.example.gitissuepull.domain.data
-import com.example.gitissuepull.domain.uses.*
+import com.example.gitissuepull.domain.repo.issue.IssueRepository
+import com.example.gitissuepull.domain.repo.user_repos.UserRepoRepository
+import com.example.gitissuepull.domain.repo.users.UsersRepository
 import io.reactivex.Single
 
-class TestGetUsers: UseCaseGetUser {
+class TestGetUsers: UsersRepository.UseGet {
     override fun getUser(name: String): Single<User> =
         Single.just(TestData.users.find { it.login.equals(name)} )
 }
 
-class TestGetUserRepos: UseCaseGetUserReposPage {
+class TestGetUserRepos: UserRepoRepository.UseGet {
     override fun getUserReposPage(
         owner: String,
         page: Int,
@@ -19,7 +21,7 @@ class TestGetUserRepos: UseCaseGetUserReposPage {
         })
 }
 
-class TestGetIssues: UseCaseGetIssues {
+class TestGetIssues: IssueRepository.UseGet {
     override fun getIssues(user: String, repository: String): Single<List<Issue>> =
         Single.just(run {
             val u1 = TestData.users.find { it.login == user } ?: return@run null

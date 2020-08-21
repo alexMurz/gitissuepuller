@@ -4,13 +4,17 @@ import com.example.gitissuepull.domain.data.Repository
 import com.example.gitissuepull.domain.data.TestData
 import com.example.gitissuepull.domain.data.TestGetUserRepos
 import com.example.gitissuepull.domain.data.User
-import com.example.gitissuepull.domain.repo.UserRepoRepository
+import com.example.gitissuepull.domain.repo.user_repos.BasicUserRepoRepository
+import com.example.gitissuepull.domain.repo.user_repos.UserRepoRepository
 import org.junit.Assert
 import org.junit.Test
 import java.lang.NullPointerException
 
 class TestRepos {
-    private val repo = UserRepoRepository(TestGetUserRepos())
+    private val repo =
+        BasicUserRepoRepository(
+            TestGetUserRepos()
+        )
 
     @Suppress("ControlFlowWithEmptyBody")
     @Test fun testAll() {
@@ -28,7 +32,7 @@ class TestRepos {
             repo.setUser(user)
             repo.addListener(listener)
             while (repo.loadNextPage());
-            Assert.assertEquals(repo.loaded.size, user.publicRepos)
+            Assert.assertEquals(repo.list().size, user.publicRepos)
             repo.removeListener(listener)
         }
     }

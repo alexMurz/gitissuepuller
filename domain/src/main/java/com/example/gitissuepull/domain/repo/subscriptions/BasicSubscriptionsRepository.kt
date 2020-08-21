@@ -1,18 +1,19 @@
-package com.example.gitissuepull.domain.repo
+package com.example.gitissuepull.domain.repo.subscriptions
 
 import com.example.gitissuepull.domain.data.Repository
-import com.example.gitissuepull.domain.uses.UseCaseLoadSubscriptions
-import com.example.gitissuepull.domain.uses.UseCaseSaveSubscriptions
+import com.example.gitissuepull.domain.repo.RepositoryBase
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
 
-class SubscriptionsRepository(
-    private val useLoad: UseCaseLoadSubscriptions,
-    private val useSave: UseCaseSaveSubscriptions
-): RepositoryBase<SubscriptionsRepository.Callback>() {
+class BasicSubscriptionsRepository(
+    useLoad: SubscriptionsRepository.UseLoad,
+    private val useSave: SubscriptionsRepository.UseSave
+): SubscriptionsRepository, RepositoryBase<SubscriptionsRepository.Callback>() {
 
     // Subs list
     val subs = ArrayList<Repository>()
+    override fun list() = subs
+
     init {
         useLoad.loadSubscriptions().subscribe(object : SingleObserver<List<Repository>> {
             var d: Disposable? = null
@@ -29,21 +30,19 @@ class SubscriptionsRepository(
         })
     }
 
-    override fun onListenerAdded(l: Callback) = l.subscriptionsUpdated(subs)
+    override fun onListenerAdded(l: SubscriptionsRepository.Callback) = l.subscriptionsUpdated(subs)
 
-    fun subscribeTo(sub: Repository) {
+    override fun subscribeTo(sub: Repository) {
         subs.add(sub)
         useSave.saveSubscriptions(subs)
         callback { subscriptionsUpdated(subs) }
     }
 
-    fun unsubFrom(sub: Repository): Boolean {
+    override fun unsubFrom(sub: Repository): Boolean {
         val r = subs.remove(sub)
         useSave.saveSubscriptions(subs)
         return r
     }
 
-    interface Callback {
-        fun subscriptionsUpdated(new: List<Repository>)
-    }
 }
+
