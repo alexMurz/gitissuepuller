@@ -18,10 +18,15 @@ class IssueListViewModel : ViewModel(),
     val issueData = MutableLiveData<List<Issue>>()
     val error = MutableLiveData<Throwable>()
 
+
     // Repo data, given by fragment on init
+    private var owner: String? = null
+    private var ownerRepo: String? = null
     fun attachWith(owner: String, repo: String) {
+        this.owner = owner
+        this.ownerRepo = repo
         this.repo.addListener(this)
-        this.repo.setSource(owner, repo)
+        this.repo.get(owner, repo)
     }
 
     override fun onCleared() {
@@ -41,6 +46,10 @@ class IssueListViewModel : ViewModel(),
     }
 
     // Event Listener for View
-    fun onRefresh() = repo.reload()
+    fun onRefresh() {
+        val owner = owner ?: return
+        val ownerRepo = ownerRepo ?: return
+        repo.load(owner, ownerRepo)
+    }
 
 }

@@ -7,6 +7,7 @@ import com.example.gitissuepull.data.api.UsersApi
 import com.example.gitissuepull.data.uses.*
 import com.example.gitissuepull.di.DataScope
 import com.example.gitissuepull.domain.repo.issue.BasicIssueRepository
+import com.example.gitissuepull.domain.repo.issue.CachedIssueRepository
 import com.example.gitissuepull.domain.repo.issue.IssueRepository
 import com.example.gitissuepull.domain.repo.subscriptions.BasicSubscriptionsRepository
 import com.example.gitissuepull.domain.repo.subscriptions.SubscriptionsRepository
@@ -45,7 +46,7 @@ class RepositoryModule {
     @Provides
     @DataScope
     fun issuesRepository(api: IssuesApi): IssueRepository =
-        BasicIssueRepository(
+        CachedIssueRepository(
             UseCaseUssueApiGetIssues(api)
         )
 
