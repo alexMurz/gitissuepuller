@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import com.example.gitissuepull.di.component.*
 import com.example.gitissuepull.di.module.AppModule
 import com.example.gitissuepull.di.module.RepositoryModule
+import io.paperdb.Paper
 
 class App: Application() {
     companion object {
@@ -22,6 +23,7 @@ class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Paper.init(applicationContext)
 
         appComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
