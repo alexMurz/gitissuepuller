@@ -1,6 +1,7 @@
 package com.example.gitissuepull.di.component
 
 import android.content.Context
+import com.example.gitissuepull.api.CacheSerializerProvider
 import com.example.gitissuepull.data.api.IssuesApi
 import com.example.gitissuepull.data.api.RepositoryApi
 import com.example.gitissuepull.data.api.SubscriptionsApi
@@ -24,6 +25,7 @@ interface RepositoryComponent {
     fun repository(): RepositoryApi
     fun users(): UsersApi
     fun subscriptions(): SubscriptionsApi
+    fun cacheProvider(): CacheSerializerProvider
 
     fun subscriptionsRepository(): SubscriptionsRepository
     fun userReposRepository(): UserRepoRepository

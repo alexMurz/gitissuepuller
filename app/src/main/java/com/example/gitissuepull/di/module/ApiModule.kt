@@ -1,7 +1,6 @@
 package com.example.gitissuepull.di.module
 
-import android.content.Context
-import com.example.gitissuepull.AndroidSchedulers
+import com.example.gitissuepull.api.CacheSerializerProvider
 import com.example.gitissuepull.api.SubscriptionsApiPaper
 import com.example.gitissuepull.data.Schedulers
 import com.example.gitissuepull.data.api.IssuesApi
@@ -23,8 +22,12 @@ class ApiModule {
     @Provides @Singleton fun repository(s: Schedulers): RepositoryApi = retrofitApi(s)
     @Provides @Singleton fun users(s: Schedulers): UsersApi = retrofitApi(s)
 
-    @Provides @Singleton fun subscriptions(context: Context, s: Schedulers): SubscriptionsApi {
-        Paper.init(context)
+    @Provides @Singleton fun subscriptions(s: Schedulers): SubscriptionsApi {
         return SubscriptionsApiPaper(Paper.book(), s.single())
     }
+
+    @Provides @Singleton fun cacheSerializerProvider(s: Schedulers): CacheSerializerProvider {
+        return CacheSerializerProvider(Paper.book("cache"), s.single())
+    }
+
 }

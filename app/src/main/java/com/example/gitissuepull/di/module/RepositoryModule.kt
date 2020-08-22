@@ -1,11 +1,13 @@
 package com.example.gitissuepull.di.module
 
+import com.example.gitissuepull.api.CacheSerializerProvider
 import com.example.gitissuepull.data.api.IssuesApi
 import com.example.gitissuepull.data.api.RepositoryApi
 import com.example.gitissuepull.data.api.SubscriptionsApi
 import com.example.gitissuepull.data.api.UsersApi
 import com.example.gitissuepull.data.uses.*
 import com.example.gitissuepull.di.DataScope
+import com.example.gitissuepull.domain.data.Issue
 import com.example.gitissuepull.domain.repo.issue.BasicIssueRepository
 import com.example.gitissuepull.domain.repo.issue.CachedIssueRepository
 import com.example.gitissuepull.domain.repo.issue.IssueRepository
@@ -45,9 +47,13 @@ class RepositoryModule {
 
     @Provides
     @DataScope
-    fun issuesRepository(api: IssuesApi): IssueRepository =
-        CachedIssueRepository(
-            UseCaseUssueApiGetIssues(api)
+    fun issuesRepository(api: IssuesApi, provider: CacheSerializerProvider): IssueRepository {
+        val serializer = provider.get<String, List<Issue>>("issues")
+        return CachedIssueRepository(
+            UseCaseUssueApiGetIssues(api),
+            serializer,
+            serializer
         )
+    }
 
 }

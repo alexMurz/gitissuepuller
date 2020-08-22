@@ -1,6 +1,7 @@
 package com.example.gitissuepull.di.component
 
 import android.content.Context
+import com.example.gitissuepull.api.CacheSerializerProvider
 import com.example.gitissuepull.data.Schedulers
 import com.example.gitissuepull.data.api.IssuesApi
 import com.example.gitissuepull.data.api.RepositoryApi
@@ -9,6 +10,7 @@ import com.example.gitissuepull.data.api.UsersApi
 import com.example.gitissuepull.di.module.ApiModule
 import com.example.gitissuepull.di.module.AppModule
 import dagger.Component
+import dagger.Provides
 import javax.inject.Singleton
 
 @Singleton
@@ -23,4 +25,5 @@ interface AppComponent {
     fun repository(): RepositoryApi
     fun users(): UsersApi
     fun subscriptions(): SubscriptionsApi
+    fun cacheSerializerProvider(): CacheSerializerProvider
 }
